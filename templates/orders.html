@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Order History</h2>
+{% if orders and orders|length > 0 %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order['id'] }}</td>
+            <td>{{ order['date'] }}</td>
+            <td>
+                <ul>
+                {% for item in order['items'] %}
+                    <li>{{ item['brand'] }} {{ item['model'] }} x{{ item['quantity'] }}</li>
+                {% endfor %}
+                </ul>
+            </td>
+            <td>${{ order['total'] }}</td>
+            <td>{{ order['status'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>You have no orders yet.</p>
+{% endif %}
+{% endblock %}

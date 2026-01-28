@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">{{ action }} Laptop</h2>
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="brand">Brand</label>
+            <input type="text" class="form-control" id="brand" name="brand"
+                   value="{{ laptop.brand if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %} required>
+        </div>
+        <div class="form-group">
+            <label for="model">Model</label>
+            <input type="text" class="form-control" id="model" name="model"
+                   value="{{ laptop.model if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %} required>
+        </div>
+        <div class="form-group">
+            <label for="specs">Specs</label>
+            <textarea class="form-control" id="specs" name="specs"
+                      {% if readonly %}readonly{% endif %} required>{{ laptop.specs if laptop else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price"
+                   value="{{ laptop.price if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %} required>
+        </div>
+        <div class="form-group">
+            <label for="discount">Discount (%)</label>
+            <input type="number" step="0.01" class="form-control" id="discount" name="discount"
+                   value="{{ laptop.discount if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="promotion">Promotion</label>
+            <input type="text" class="form-control" id="promotion" name="promotion"
+                   value="{{ laptop.promotion if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %}>
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" class="form-control" id="stock" name="stock"
+                   value="{{ laptop.stock if laptop else '' }}"
+                   {% if readonly %}readonly{% endif %} required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description"
+                      {% if readonly %}readonly{% endif %}>{{ laptop.description if laptop else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="image">Image</label>
+            {% if readonly %}
+                <input type="text" class="form-control" value="{{ laptop.image if laptop else '' }}" readonly>
+            {% else %}
+                <input type="file" class="form-control" id="image" name="image">
+                {% if laptop and laptop.image %}
+                    <small>Current image: {{ laptop.image }}</small>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="form-group mt-3">
+            {% if action == 'Delete' %}
+                <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            {% else %}
+                <button type="submit" class="btn btn-success">{{ action }}</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,11 +13,13 @@ def is_valid_email(email):
 def register_routes(app):
     @app.route('/')
     def index():
-        laptops = Laptop.query.filter(Laptop.promotion.isnot(None)).all()
-        per_page = 10  # Set your desired pagination size
-        total = len(laptops)  # Or use laptops.count() if it's a query object
         page = request.args.get('page', 1, type=int)
-        return render_template('index.html', laptops=laptops, total=total, per_page=per_page, page=page)
+        per_page = 6
+        laptops_pagination = Laptop.query.filter(Laptop.promotion.isnot(None)).order_by(
+            Laptop.discount.desc(), Laptop.id.desc()
+        ).paginate(page=page, per_page=per_page, error_out=False)
+        laptops = laptops_pagination.items
+        return render_template('index.html', laptops=laptops, pagination=laptops_pagination)
 
     @app.route('/product/<int:laptop_id>')
     def product(laptop_id):

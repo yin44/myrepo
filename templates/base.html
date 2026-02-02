@@ -8,18 +8,18 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{{ url_for('index') }}">LaptopShop</a>
+    <a class="navbar-brand">LaptopShop</a>
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
             {% if current_user.is_authenticated and current_user.role == 'admin' %}
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('add_product') }}">Add Product</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_orders') }}">Admin Orders</a></li>
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
             {% if current_user.is_authenticated %}
-                <!-- Example navigation bar snippet -->
-                {% if current_user.is_authenticated and current_user.role != 'admin' %}
+                {% if current_user.is_authenticated and current_user.role|string|trim|lower != 'admin' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('cart') }}">Cart</a>
                     </li>
@@ -44,4 +44,5 @@
     {% block content %}{% endblock %}
 </div>
 </body>
-</html>
+</html>user.is_authenticated %}
+            

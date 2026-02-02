@@ -26,10 +26,11 @@
         <p><span class="badge badge-success">{{ laptop['promotion'] }}</span></p>
         {% endif %}
         <p><strong>Stock:</strong> {{ laptop['stock'] }}</p>
-        <form method="post" action="{{ url_for('cart') }}">
-            <input type="hidden" name="laptop_id" value="{{ laptop['id'] }}">
+        {% if current_user.is_authenticated and current_user.role|string|trim|lower != 'admin' %}
+        <form method="post" action="{{ url_for('add_to_cart', laptop_id=laptop.id) }}">
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
+        {% endif %}
         {% if laptop['discount'] and laptop['discount'] > 0 %}
         <p class="mt-2 text-info">Discount: {{ laptop['discount'] }}%</p>
         {% endif %}

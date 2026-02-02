@@ -24,18 +24,28 @@
                     </p>
                 </div>
                 <div class="mt-auto">
-                    {% if laptop['promotion'] %}
-                    <span class="badge badge-success d-block mb-2">{{ laptop['promotion'] }}</span>
+                    {% if laptop.promotion %}
+                    <span class="badge badge-success d-block mb-2">{{ laptop.promotion }}</span>
                     {% endif %}
+
                     <div class="mt-2">
-                        <a href="{{ url_for('product', laptop_id=laptop['id']) }}" class="btn btn-primary">View Details</a>
-                        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                        {# --- BUTTON LOGIC --- #}
+
+                        {# Guest View: Not logged in #}
+                        {% if not current_user.is_authenticated %}
+                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
+
+                        {# Admin View: Logged in and role is 'admin' #}
+                        {% elif current_user.role|string|trim|lower == 'admin' %}
+                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
                             <a href="{{ url_for('edit_product', laptop_id=laptop.id) }}" class="btn btn-warning">Update</a>
                             <a href="{{ url_for('delete_product', laptop_id=laptop.id) }}" class="btn btn-danger">Delete</a>
-                        
-                        {% elif current_user.is_authenticated and current_user.role != 'admin' %}
-                            <form method="post" action="{{ url_for('add_to_cart', laptop_id=laptop.id) }}" class="d-inline">
-                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+
+                        {# Regular User View: Logged in but not an admin #}
+                        {% else %}
+                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
+                            <form method="post" action="{{ url_for('add_to_cart', laptop_id=laptop.id) }}" style="display: inline-block;">
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
                             </form>
                         {% endif %}
                     </div>

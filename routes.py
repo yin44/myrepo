@@ -4,7 +4,7 @@ from flask import render_template, request, redirect, url_for, flash, send_from_
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from models import db, User, Laptop
+from models import db, User, Laptop, Order, OrderItem
 from flask import session
 
 def is_valid_email(email):
@@ -132,24 +132,111 @@ def register_routes(app):
     @login_required
     def checkout():
         cart_items = session.get('cart', [])
+        if not cart_items:
+            flash('Your cart is empty.')
+            return redirect(url_for('cart'))
+
+        grand_total = 0
         for item in cart_items:
             price = item.get('price', 0)
             discount = item.get('discount', 0)
             quantity = item.get('quantity', 1)
-            item['subtotal'] = (price - discount) * quantity
-        total = sum(item['subtotal'] for item in cart_items) if cart_items else 0
+            final_price = price * (1 - discount / 100)
+            item['subtotal'] = final_price * quantity
+            grand_total += item['subtotal']
+
         if request.method == 'POST':
-            # Handle order confirmation logic here
-            flash('Order confirmed!')
-            session['cart'] = []  # Clear cart after checkout
+            shipping_address = request.form.get('address')
+            if not shipping_address:
+                flash('Shipping address is required.', 'error')
+                return render_template('checkout.html', cart_items=cart_items, total=grand_total)
+
+            # Create the Order
+            new_order = Order(
+                user_id=current_user.id,
+                total_price=grand_total,
+                shipping_address=shipping_address,
+                status='Pending'
+            )
+            db.session.add(new_order)
+            db.session.commit() # Commit to get the new_order.id
+
+            # Create OrderItems and update stock
+            for item in cart_items:
+                laptop = Laptop.query.get(item['id'])
+                if laptop and laptop.stock >= item['quantity']:
+                    price_at_purchase = laptop.price * (1 - (laptop.discount or 0) / 100)
+                    
+                    order_item = OrderItem(
+                        order_id=new_order.id,
+                        laptop_id=item['id'],
+                        quantity=item['quantity'],
+                        price_at_purchase=price_at_purchase
+                    )
+                    db.session.add(order_item)
+                    
+                    # Decrement stock
+                    laptop.stock -= item['quantity']
+                else:
+                    # Not enough stock, this is a simplified handling.
+                    flash(f"Sorry, {item['brand']} {item['model']} is out of stock.", 'error')
+                    db.session.rollback() # Rollback the transaction
+                    return redirect(url_for('cart'))
+
+            db.session.commit()
+
+            # Clear the cart
+            session['cart'] = []
+            flash('Your order has been placed successfully!', 'success')
             return redirect(url_for('orders'))
-        return render_template('checkout.html', cart_items=cart_items, total=total)
+
+        return render_template('checkout.html', cart_items=cart_items, total=grand_total)
 
     @app.route('/orders')
     @login_required
     def orders():
         # Implement order history logic here
         return render_template('orders.html')
+
+    @app.route('/admin/orders')
+    @login_required
+    def admin_orders():
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+        
+        all_orders = Order.query.order_by(Order.order_date.desc()).all()
+        return render_template('admin_orders.html', orders=all_orders)
+
+    @app.route('/admin/order/<int:order_id>')
+    @login_required
+    def admin_order_details(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+        
+        order = Order.query.get_or_404(order_id)
+        return render_template('admin_order_details.html', order=order)
+
+    @app.route('/admin/order/update_status/<int:order_id>', methods=['POST'])
+    @login_required
+    def update_order_status(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+
+        order = Order.query.get_or_404(order_id)
+        new_status = request.form.get('status')
+
+        if new_status in ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']:
+            order.status = new_status
+            db.session.commit()
+            flash(f'Order #{order.id} status updated to {new_status}.', 'success')
+        else:
+            flash('Invalid status update.', 'error')
+        
+        return redirect(url_for('admin_orders'))
+
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():

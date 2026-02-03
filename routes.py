@@ -1,6 +1,6 @@
 import os
 import re
-from flask import render_template, request, redirect, url_for, flash, send_from_directory
+from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -188,15 +188,11 @@ def register_routes(app):
             # Clear the cart
             session['cart'] = []
             flash('Your order has been placed successfully!', 'success')
-            return redirect(url_for('orders'))
+            return redirect(url_for('index'))
 
         return render_template('checkout.html', cart_items=cart_items, total=grand_total)
 
-    @app.route('/orders')
-    @login_required
-    def orders():
-        # Implement order history logic here
-        return render_template('orders.html')
+
 
     @app.route('/admin/orders')
     @login_required
@@ -235,6 +231,23 @@ def register_routes(app):
         else:
             flash('Invalid status update.', 'error')
         
+        return redirect(url_for('admin_orders'))
+
+    @app.route('/admin/order/delete/<int:order_id>', methods=['POST'])
+    @login_required
+    def delete_order(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+
+        order = Order.query.get_or_404(order_id)
+        
+        # Optional: Add checks here, e.g., only allow deletion for cancelled orders
+        
+        db.session.delete(order)
+        db.session.commit()
+        
+        flash(f'Order #{order.id} has been deleted.', 'success')
         return redirect(url_for('admin_orders'))
 
 
@@ -288,28 +301,40 @@ def register_routes(app):
     @app.route('/add_to_cart/<int:laptop_id>', methods=['POST'])
     @login_required
     def add_to_cart(laptop_id):
-        # Get the cart from session, or create a new one
+        laptop = Laptop.query.get_or_404(laptop_id)
         cart = session.get('cart', [])
-        # Check if laptop is already in cart (optional: support quantity)
+        
+        found_item = None
         for item in cart:
             if item['id'] == laptop_id:
-                item['quantity'] += 1
+                found_item = item
                 break
+        
+        if found_item:
+            # Check against stock before increasing quantity
+            if laptop.stock > found_item['quantity']:
+                found_item['quantity'] += 1
+                flash('Laptop quantity updated in cart!')
+            else:
+                flash(f'Sorry, only {laptop.stock} of {laptop.brand} {laptop.model} available.', 'error')
         else:
-            # Get laptop details from DB
-            laptop = Laptop.query.get_or_404(laptop_id)
-            cart.append({
-                'id': laptop.id,
-                'brand': laptop.brand,
-                'model': laptop.model,
-                'specs': laptop.specs,
-                'price': laptop.price,
-                'discount': laptop.discount,
-                'quantity': 1,
-                'image': laptop.image
-            })
+            # Check against stock before adding a new item
+            if laptop.stock > 0:
+                cart.append({
+                    'id': laptop.id,
+                    'brand': laptop.brand,
+                    'model': laptop.model,
+                    'specs': laptop.specs,
+                    'price': laptop.price,
+                    'discount': laptop.discount,
+                    'quantity': 1,
+                    'image': laptop.image
+                })
+                flash('Laptop added to cart!')
+            else:
+                flash(f'Sorry, {laptop.brand} {laptop.model} is out of stock.', 'error')
+        
         session['cart'] = cart
-        flash('Laptop added to cart!')
         return redirect(url_for('cart'))
 
     @app.route('/remove_from_cart/<int:laptop_id>', methods=['POST'])

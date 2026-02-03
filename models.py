@@ -80,4 +80,4 @@ class OrderItem(db.Model):
     laptop = db.relationship('Laptop')
 
     def __repr__(self):
-        return f'<OrderItem {self.id}>'
+        return f'<OrderItem {self.id}>' 

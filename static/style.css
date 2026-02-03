@@ -18,8 +18,53 @@ body {
     background: #fff;
 }
 
-.btn-primary, .btn-success {
-    border-radius: 20px;
+.btn-primary {
+    background-color: #343a40; /* Dark grey */
+    border-color: #343a40;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #23272b; /* Even darker grey on hover */
+    border-color: #23272b;
+}
+
+.btn-success {
+    background-color: #4a6b4a; /* Dark desaturated green */
+    border-color: #4a6b4a;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #3a5a3a; /* Darker desaturated green on hover */
+    border-color: #3a5a3a;
+}
+
+.btn-warning {
+    background-color: #8b7b6b; /* Dark desaturated yellow/brown */
+    border-color: #8b7b6b;
+    color: #fff; /* White text for better contrast */
+}
+
+.btn-warning:hover {
+    background-color: #7a6a5a; /* Darker desaturated yellow/brown on hover */
+    border-color: #7a6a5a;
+}
+
+.btn-danger {
+    background-color: #a94442; /* Muted dark red */
+    border-color: #a94442;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #8b0000; /* Darker red on hover */
+    border-color: #8b0000;
+}
+
+.badge-success {
+    background-color: #4a6b4a; /* Match btn-success for consistency */
+    color: #fff;
 }
 
 footer.footer {

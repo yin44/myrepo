@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" action="{{ url_for('index') }}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Search by brand..." value="{{ request.args.get('search', '') }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <h2 class="mb-4">Featured Laptops</h2>
 <div class="row">
     {% for laptop in laptops %}

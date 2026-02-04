@@ -2,6 +2,7 @@ import os
 import re
 from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort
 from flask_login import login_user, logout_user, current_user, login_required
+from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from models import db, User, Laptop, Order, OrderItem
@@ -10,14 +11,18 @@ from flask import session
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-def register_routes(app):
+def register_routes(app, mail):
     @app.route('/')
     def index():
         page = request.args.get('page', 1, type=int)
         per_page = 6
-        laptops_pagination = Laptop.query.filter(Laptop.promotion.isnot(None)).order_by(
-            Laptop.discount.desc(), Laptop.id.desc()
-        ).paginate(page=page, per_page=per_page, error_out=False)
+        search_query = request.args.get('search')
+        if search_query:
+            laptops_pagination = Laptop.query.filter(Laptop.brand.ilike(f'%{search_query}%')).paginate(page=page, per_page=per_page, error_out=False)
+        else:
+            laptops_pagination = Laptop.query.filter(Laptop.promotion.isnot(None)).order_by(
+                Laptop.discount.desc(), Laptop.id.desc()
+            ).paginate(page=page, per_page=per_page, error_out=False)
         laptops = laptops_pagination.items
         return render_template('index.html', laptops=laptops, pagination=laptops_pagination)
 
@@ -147,8 +152,12 @@ def register_routes(app):
 
         if request.method == 'POST':
             shipping_address = request.form.get('address')
+            customer_email = request.form.get('email')
             if not shipping_address:
                 flash('Shipping address is required.', 'error')
+                return render_template('checkout.html', cart_items=cart_items, total=grand_total)
+            if not customer_email:
+                flash('Email address is required.', 'error')
                 return render_template('checkout.html', cart_items=cart_items, total=grand_total)
 
             # Create the Order
@@ -185,9 +194,20 @@ def register_routes(app):
 
             db.session.commit()
 
+            # Send confirmation email
+            try:
+                msg = Message("Your Order Confirmation",
+                              sender=("LaptopSales", os.environ.get('MAIL_USERNAME')),
+                              recipients=[customer_email])
+                msg.html = render_template('order_confirmation_email.html', order=new_order, user=current_user, items=cart_items, total=grand_total)
+                mail.send(msg)
+                flash('Your order has been placed and a confirmation email has been sent!', 'success')
+            except Exception as e:
+                app.logger.error(f"Failed to send email: {e}")
+                flash('Your order has been placed, but we failed to send a confirmation email. Please contact support.', 'warning')
+
             # Clear the cart
             session['cart'] = []
-            flash('Your order has been placed successfully!', 'success')
             return redirect(url_for('index'))
 
         return render_template('checkout.html', cart_items=cart_items, total=grand_total)
@@ -250,7 +270,6 @@ def register_routes(app):
         flash(f'Order #{order.id} has been deleted.', 'success')
         return redirect(url_for('admin_orders'))
 
-
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         error = None
@@ -283,7 +302,7 @@ def register_routes(app):
             username = request.form['username']
             email = request.form['email']
             password = request.form['password']
-            role = request.form.get('role', 'user')
+            role = 'user'  # Always create regular users, not admins
             if not is_valid_email(email):
                 flash('Invalid email format.')
                 return render_template('register.html')

@@ -25,6 +25,16 @@ def init_db():
         )
     ''')
     conn.commit()
+    
+    # Create fixed admin account if it doesn't exist
+    from werkzeug.security import generate_password_hash
+    cursor.execute('SELECT id FROM user WHERE username = ?', ('admin',))
+    if not cursor.fetchone():
+        hashed_password = generate_password_hash('1234')
+        cursor.execute('INSERT INTO user (username, email, password, role) VALUES (?, ?, ?, ?)', 
+                      ('admin', 'admin@gmail.com', hashed_password, 'admin'))
+        conn.commit()
+    
     conn.close()
 
 from flask_sqlalchemy import SQLAlchemy
@@ -80,4 +90,4 @@ class OrderItem(db.Model):
     laptop = db.relationship('Laptop')
 
     def __repr__(self):
-        return f'<OrderItem {self.id}>' 
+        return f'<OrderItem {self.id}>'

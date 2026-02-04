@@ -2,9 +2,9 @@
 
 {% block content %}
 <div class="row mb-4">
-    <div class="col-md-6">
-        <form method="get" action="{{ url_for('index') }}">
-            <div class="input-group">
+    <div class="col-md-4 ml-auto">
+        <form method="get" action="{{ url_for('index') }}" class="form-inline">
+            <div class="input-group input-group-sm w-100">
                 <input type="text" class="form-control" name="search" placeholder="Search by brand..." value="{{ request.args.get('search', '') }}">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">Search</button>

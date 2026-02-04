@@ -47,7 +47,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h2>Thank you for your order, {{ user.username }}!</h2>
+            <h2>Thank you for your order, {{ customer_name }}!</h2>
             <p>We've received your order and will process it shortly.</p>
         </div>
 
@@ -85,7 +85,7 @@
         <div class="customer-details">
             <h3>Shipping to:</h3>
             <p>
-                {{ user.username }}<br>
+                {{ customer_name }}<br>
                 {{ order.shipping_address }}
             </p>
         </div>

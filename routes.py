@@ -20,8 +20,15 @@ def register_routes(app, mail):
         if search_query:
             laptops_pagination = Laptop.query.filter(Laptop.brand.ilike(f'%{search_query}%')).paginate(page=page, per_page=per_page, error_out=False)
         else:
-            laptops_pagination = Laptop.query.filter(Laptop.promotion.isnot(None)).order_by(
-                Laptop.discount.desc(), Laptop.id.desc()
+            # This logic creates the desired sorting order:
+            # 1. Items with a promotion tag are prioritized first.
+            # 2. Then, items with a discount are prioritized.
+            # 3. Finally, regular items are shown.
+            # Within each group, items are sorted by their creation ID.
+            laptops_pagination = Laptop.query.order_by(
+                (Laptop.promotion.isnot(None) & (Laptop.promotion != '')).desc(),
+                (Laptop.discount > 0).desc(),
+                Laptop.id.asc()
             ).paginate(page=page, per_page=per_page, error_out=False)
         laptops = laptops_pagination.items
         return render_template('index.html', laptops=laptops, pagination=laptops_pagination)
@@ -151,6 +158,7 @@ def register_routes(app, mail):
             grand_total += item['subtotal']
 
         if request.method == 'POST':
+            customer_name = request.form.get('name')
             shipping_address = request.form.get('address')
             customer_email = request.form.get('email')
             if not shipping_address:
@@ -199,7 +207,7 @@ def register_routes(app, mail):
                 msg = Message("Your Order Confirmation",
                               sender=("LaptopSales", os.environ.get('MAIL_USERNAME')),
                               recipients=[customer_email])
-                msg.html = render_template('order_confirmation_email.html', order=new_order, user=current_user, items=cart_items, total=grand_total)
+                msg.html = render_template('order_confirmation_email.html', order=new_order, customer_name=customer_name, items=cart_items, total=grand_total)
                 mail.send(msg)
                 flash('Your order has been placed and a confirmation email has been sent!', 'success')
             except Exception as e:

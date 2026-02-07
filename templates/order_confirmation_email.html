@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .order-details, .customer-details {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Thank you for your order, {{ customer_name }}!</h2>
+            <p>We've received your order and will process it shortly.</p>
+        </div>
+
+        <div class="order-details">
+            <h3>Order #{{ order.id }}</h3>
+            <p><strong>Order Date:</strong> {{ order.order_date.strftime('%Y-%m-%d') }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.brand }} {{ item.model }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ "%.2f"|format(item.price * (1 - item.discount / 100)) }}</td>
+                        <td>${{ "%.2f"|format(item.subtotal) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align:right;"><strong>Total:</strong></td>
+                        <td><strong>${{ "%.2f"|format(total) }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="customer-details">
+            <h3>Shipping to:</h3>
+            <p>
+                {{ customer_name }}<br>
+                {{ order.shipping_address }}
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>If you have any questions, please contact our customer support.</p>
+            <p>&copy; {% set current_year = "now"|string|slice(0,4) %} {{ current_year }} LaptopSales. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -32,7 +32,7 @@
             <td>${{ item['price'] }}</td>
             <td>{{ item['discount'] if item['discount'] else 0 }}%</td>
             <td>{{ item['quantity'] }}</td>
-            <td>${{ item['subtotal'] }}</td>
+            <td>${{ item['subtotal']|round(2) }}</td>
             <td>
                 <form action="{{ url_for('remove_from_cart', laptop_id=item['id']) }}" method="post" style="display:inline;">
                     <button type="submit" class="btn btn-danger">Remove</button>

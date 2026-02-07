@@ -30,25 +30,25 @@
             </tr>
         </thead>
         <tbody>
-            {% set total = 0 %}
+            {% set grand_total = [] %}
             {% for item in cart_items %}
             {% set price = item['price'] %}
             {% set discount = item['discount'] if item['discount'] else 0 %}
-            {% set final_price = (price * (1 - discount/100))|round(2) %}
-            {% set subtotal = (final_price * item['quantity'])|round(2) %}
-            {% set total = total + subtotal %}
+            {% set final_price = (price * (1 - discount/100)) %}
+            {% set subtotal = (final_price * item['quantity']) %}
+            {% if grand_total.append(subtotal) %}{% endif %}
             <tr>
                 <td>{{ item['brand'] }} {{ item['model'] }}</td>
                 <td>{{ item['quantity'] }}</td>
-                <td>${{ final_price }}</td>
+                <td>${{ final_price|round(2) }}</td>
                 <td>{{ discount }}%</td>
-                <td>${{ subtotal }}</td>
+                <td>${{ subtotal|round(2) }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <div class="text-right mb-4">
-        <h4>Total: ${{ total|round(2) }}</h4>
+        <h4>Total: ${{ grand_total|sum|round(2) }}</h4>
     </div>
     <button type="submit" class="btn btn-success btn-lg">Confirm Order</button>
     <a href="{{ url_for('cart') }}" class="btn btn-secondary ml-2">Back to Cart</a>

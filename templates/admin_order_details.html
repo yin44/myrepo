@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Order Details #{{ order.id }}</h2>
+
+<div class="card">
+    <div class="card-header">
+        Order Summary
+    </div>
+    <div class="card-body">
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Customer:</strong> {{ order.customer.username }} ({{ order.customer.email }})</p>
+        <p><strong>Order Date:</strong> {{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Shipping Address:</strong> {{ order.shipping_address }}</p>
+        <p><strong>Total Price:</strong> ${{ order.total_price|round(2) }}</p>
+    </div>
+</div>
+
+<h4 class="mt-4">Items in this Order</h4>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Brand & Model</th>
+            <th>Quantity</th>
+            <th>Price at Purchase</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items %}
+        <tr>
+            <td>{{ item.laptop.brand }} {{ item.laptop.model }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price_at_purchase|round(2) }}</td>
+            <td>${{ (item.price_at_purchase * item.quantity)|round(2) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('admin_orders') }}" class="btn btn-secondary mt-3">Back to All Orders</a>
+
+{% endblock %}

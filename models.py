@@ -25,10 +25,21 @@ def init_db():
         )
     ''')
     conn.commit()
+    
+    # Create fixed admin account if it doesn't exist
+    from werkzeug.security import generate_password_hash
+    cursor.execute('SELECT id FROM user WHERE username = ?', ('admin',))
+    if not cursor.fetchone():
+        hashed_password = generate_password_hash('1234')
+        cursor.execute('INSERT INTO user (username, email, password, role) VALUES (?, ?, ?, ?)', 
+                      ('admin', 'admin@gmail.com', hashed_password, 'admin'))
+        conn.commit()
+    
     conn.close()
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -38,6 +49,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(10), nullable=False, default='user')  # 'user' or 'admin'
+    orders = db.relationship('Order', backref='customer', lazy=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -56,3 +68,26 @@ class Laptop(db.Model):
 
     def __repr__(self):
         return f'<Laptop {self.brand} {self.model}>'
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Pending') # e.g., Pending, Shipped, Delivered, Cancelled
+    order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    shipping_address = db.Column(db.Text, nullable=False)
+    items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f'<Order {self.id}>'
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    laptop_id = db.Column(db.Integer, db.ForeignKey('laptop.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    price_at_purchase = db.Column(db.Float, nullable=False) # Price of one item at the time of purchase
+    laptop = db.relationship('Laptop')
+
+    def __repr__(self):
+        return f'<OrderItem {self.id}>'

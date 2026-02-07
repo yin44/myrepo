@@ -1,23 +1,35 @@
 import os
 import re
-from flask import render_template, request, redirect, url_for, flash, send_from_directory
+from flask import render_template, request, redirect, url_for, flash, send_from_directory, abort
 from flask_login import login_user, logout_user, current_user, login_required
+from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from models import db, User, Laptop
+from models import db, User, Laptop, Order, OrderItem
 from flask import session
 
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-def register_routes(app):
+def register_routes(app, mail):
     @app.route('/')
     def index():
         page = request.args.get('page', 1, type=int)
         per_page = 6
-        laptops_pagination = Laptop.query.filter(Laptop.promotion.isnot(None)).order_by(
-            Laptop.discount.desc(), Laptop.id.desc()
-        ).paginate(page=page, per_page=per_page, error_out=False)
+        search_query = request.args.get('search')
+        if search_query:
+            laptops_pagination = Laptop.query.filter(Laptop.brand.ilike(f'%{search_query}%')).paginate(page=page, per_page=per_page, error_out=False)
+        else:
+            # This logic creates the desired sorting order:
+            # 1. Items with a promotion tag are prioritized first.
+            # 2. Then, items with a discount are prioritized.
+            # 3. Finally, regular items are shown.
+            # Within each group, items are sorted by their creation ID.
+            laptops_pagination = Laptop.query.order_by(
+                (Laptop.promotion.isnot(None) & (Laptop.promotion != '')).desc(),
+                (Laptop.discount > 0).desc(),
+                Laptop.id.asc()
+            ).paginate(page=page, per_page=per_page, error_out=False)
         laptops = laptops_pagination.items
         return render_template('index.html', laptops=laptops, pagination=laptops_pagination)
 
@@ -132,24 +144,139 @@ def register_routes(app):
     @login_required
     def checkout():
         cart_items = session.get('cart', [])
+        if not cart_items:
+            flash('Your cart is empty.')
+            return redirect(url_for('cart'))
+
+        grand_total = 0
         for item in cart_items:
             price = item.get('price', 0)
             discount = item.get('discount', 0)
             quantity = item.get('quantity', 1)
-            item['subtotal'] = (price - discount) * quantity
-        total = sum(item['subtotal'] for item in cart_items) if cart_items else 0
-        if request.method == 'POST':
-            # Handle order confirmation logic here
-            flash('Order confirmed!')
-            session['cart'] = []  # Clear cart after checkout
-            return redirect(url_for('orders'))
-        return render_template('checkout.html', cart_items=cart_items, total=total)
+            final_price = price * (1 - discount / 100)
+            item['subtotal'] = final_price * quantity
+            grand_total += item['subtotal']
 
-    @app.route('/orders')
+        if request.method == 'POST':
+            customer_name = request.form.get('name')
+            shipping_address = request.form.get('address')
+            customer_email = request.form.get('email')
+            if not shipping_address:
+                flash('Shipping address is required.', 'error')
+                return render_template('checkout.html', cart_items=cart_items, total=grand_total)
+            if not customer_email:
+                flash('Email address is required.', 'error')
+                return render_template('checkout.html', cart_items=cart_items, total=grand_total)
+
+            # Create the Order
+            new_order = Order(
+                user_id=current_user.id,
+                total_price=grand_total,
+                shipping_address=shipping_address,
+                status='Pending'
+            )
+            db.session.add(new_order)
+            db.session.commit() # Commit to get the new_order.id
+
+            # Create OrderItems and update stock
+            for item in cart_items:
+                laptop = Laptop.query.get(item['id'])
+                if laptop and laptop.stock >= item['quantity']:
+                    price_at_purchase = laptop.price * (1 - (laptop.discount or 0) / 100)
+                    
+                    order_item = OrderItem(
+                        order_id=new_order.id,
+                        laptop_id=item['id'],
+                        quantity=item['quantity'],
+                        price_at_purchase=price_at_purchase
+                    )
+                    db.session.add(order_item)
+                    
+                    # Decrement stock
+                    laptop.stock -= item['quantity']
+                else:
+                    # Not enough stock, this is a simplified handling.
+                    flash(f"Sorry, {item['brand']} {item['model']} is out of stock.", 'error')
+                    db.session.rollback() # Rollback the transaction
+                    return redirect(url_for('cart'))
+
+            db.session.commit()
+
+            # Send confirmation email
+            try:
+                msg = Message("Your Order Confirmation",
+                              sender=("LaptopSales", os.environ.get('MAIL_USERNAME')),
+                              recipients=[customer_email])
+                msg.html = render_template('order_confirmation_email.html', order=new_order, customer_name=customer_name, items=cart_items, total=grand_total)
+                mail.send(msg)
+                flash('Your order has been placed and a confirmation email has been sent!', 'success')
+            except Exception as e:
+                app.logger.error(f"Failed to send email: {e}")
+                flash('Your order has been placed, but we failed to send a confirmation email. Please contact support.', 'warning')
+
+            # Clear the cart
+            session['cart'] = []
+            return redirect(url_for('index'))
+
+        return render_template('checkout.html', cart_items=cart_items, total=grand_total)
+
+
+
+    @app.route('/admin/orders')
     @login_required
-    def orders():
-        # Implement order history logic here
-        return render_template('orders.html')
+    def admin_orders():
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+        
+        all_orders = Order.query.order_by(Order.order_date.desc()).all()
+        return render_template('admin_orders.html', orders=all_orders)
+
+    @app.route('/admin/order/<int:order_id>')
+    @login_required
+    def admin_order_details(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+        
+        order = Order.query.get_or_404(order_id)
+        return render_template('admin_order_details.html', order=order)
+
+    @app.route('/admin/order/update_status/<int:order_id>', methods=['POST'])
+    @login_required
+    def update_order_status(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+
+        order = Order.query.get_or_404(order_id)
+        new_status = request.form.get('status')
+
+        if new_status in ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']:
+            order.status = new_status
+            db.session.commit()
+            flash(f'Order #{order.id} status updated to {new_status}.', 'success')
+        else:
+            flash('Invalid status update.', 'error')
+        
+        return redirect(url_for('admin_orders'))
+
+    @app.route('/admin/order/delete/<int:order_id>', methods=['POST'])
+    @login_required
+    def delete_order(order_id):
+        if current_user.role != 'admin':
+            flash('Admins only!', 'error')
+            return redirect(url_for('index'))
+
+        order = Order.query.get_or_404(order_id)
+        
+        # Optional: Add checks here, e.g., only allow deletion for cancelled orders
+        
+        db.session.delete(order)
+        db.session.commit()
+        
+        flash(f'Order #{order.id} has been deleted.', 'success')
+        return redirect(url_for('admin_orders'))
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -183,7 +310,7 @@ def register_routes(app):
             username = request.form['username']
             email = request.form['email']
             password = request.form['password']
-            role = request.form.get('role', 'user')
+            role = 'user'  # Always create regular users, not admins
             if not is_valid_email(email):
                 flash('Invalid email format.')
                 return render_template('register.html')
@@ -201,28 +328,40 @@ def register_routes(app):
     @app.route('/add_to_cart/<int:laptop_id>', methods=['POST'])
     @login_required
     def add_to_cart(laptop_id):
-        # Get the cart from session, or create a new one
+        laptop = Laptop.query.get_or_404(laptop_id)
         cart = session.get('cart', [])
-        # Check if laptop is already in cart (optional: support quantity)
+        
+        found_item = None
         for item in cart:
             if item['id'] == laptop_id:
-                item['quantity'] += 1
+                found_item = item
                 break
+        
+        if found_item:
+            # Check against stock before increasing quantity
+            if laptop.stock > found_item['quantity']:
+                found_item['quantity'] += 1
+                flash('Laptop quantity updated in cart!')
+            else:
+                flash(f'Sorry, only {laptop.stock} of {laptop.brand} {laptop.model} available.', 'error')
         else:
-            # Get laptop details from DB
-            laptop = Laptop.query.get_or_404(laptop_id)
-            cart.append({
-                'id': laptop.id,
-                'brand': laptop.brand,
-                'model': laptop.model,
-                'specs': laptop.specs,
-                'price': laptop.price,
-                'discount': laptop.discount,
-                'quantity': 1,
-                'image': laptop.image
-            })
+            # Check against stock before adding a new item
+            if laptop.stock > 0:
+                cart.append({
+                    'id': laptop.id,
+                    'brand': laptop.brand,
+                    'model': laptop.model,
+                    'specs': laptop.specs,
+                    'price': laptop.price,
+                    'discount': laptop.discount,
+                    'quantity': 1,
+                    'image': laptop.image
+                })
+                flash('Laptop added to cart!')
+            else:
+                flash(f'Sorry, {laptop.brand} {laptop.model} is out of stock.', 'error')
+        
         session['cart'] = cart
-        flash('Laptop added to cart!')
         return redirect(url_for('cart'))
 
     @app.route('/remove_from_cart/<int:laptop_id>', methods=['POST'])

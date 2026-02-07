@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4">{{ action }} Laptop</h2>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" {% if action == 'Delete' %}onsubmit="return confirm('Are you sure you want to delete this laptop?');"{% elif action == 'Update' %}onsubmit="return confirm('Are you sure you want to update this laptop?');"{% endif %}>
         <div class="form-group">
             <label for="brand">Brand</label>
             <input type="text" class="form-control" id="brand" name="brand"

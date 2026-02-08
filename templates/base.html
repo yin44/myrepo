@@ -32,19 +32,43 @@
     </div>
 </nav>
 <div class="container mt-4">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ 'danger' if category == 'error' else 'info' }}">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    {% block content %}{% endblock %}
+        {% block content %}{% endblock %}
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+<!-- Floating flash container -->
+<div id="flash-container" class="flash-container" aria-live="polite" aria-atomic="true">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% set cls = 'danger' if category == 'error' else (category if category in ['success','warning','info','danger'] else 'info') %}
+                <div class="flash alert alert-{{ cls }}" role="alert" data-timeout="2000">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<script>
+(function(){
+    function removeElem(el){ if(el && el.parentNode) el.parentNode.removeChild(el); }
+    document.addEventListener('DOMContentLoaded', function(){
+        var container = document.getElementById('flash-container');
+        if(!container) return;
+        var flashes = Array.prototype.slice.call(container.querySelectorAll('.flash'));
+        flashes.forEach(function(f){
+            requestAnimationFrame(function(){ f.classList.add('visible'); });
+            var timeout = parseInt(f.getAttribute('data-timeout')) || 2000;
+            setTimeout(function(){
+                f.classList.add('fade-out');
+                setTimeout(function(){ removeElem(f); }, 450);
+            }, timeout);
+        });
+    });
+})();
+</script>
 </body>
 </html>

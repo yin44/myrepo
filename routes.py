@@ -280,28 +280,29 @@ def register_routes(app, mail):
 
     @app.route('/login', methods=['GET', 'POST'])
     def login():
-        error = None
         if request.method == 'POST':
             username_or_email = request.form.get('username')
             password = request.form.get('password')
-    
+
             # Try to find user by username or email
             user = User.query.filter(
                 (User.username == username_or_email) | (User.email == username_or_email)
             ).first()
-    
+
             if user and check_password_hash(user.password, password):
                 login_user(user)
+                flash('Logged in successfully.', 'success')
                 return redirect(url_for('index'))
             else:
-                error = 'Invalid username/email or password.'
-    
-        return render_template('login.html', error=error)
+                flash('Invalid username/email or password.', 'error')
+
+        return render_template('login.html')
 
     @app.route('/logout')
     @login_required
     def logout():
         logout_user()
+        flash('You have been logged out.', 'info')
         return redirect(url_for('index'))
 
     @app.route('/register', methods=['GET', 'POST'])
@@ -362,7 +363,10 @@ def register_routes(app, mail):
                 flash(f'Sorry, {laptop.brand} {laptop.model} is out of stock.', 'error')
         
         session['cart'] = cart
-        return redirect(url_for('cart'))
+        # Flash a confirmation and return to the referrer (page where add was triggered)
+        # if referrer is not available, fall back to index
+        ref = request.referrer or url_for('index')
+        return redirect(ref)
 
     @app.route('/remove_from_cart/<int:laptop_id>', methods=['POST'])
     def remove_from_cart(laptop_id):

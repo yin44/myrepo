@@ -24,6 +24,16 @@ def init_db():
             description TEXT
         )
     ''')
+    # ensure user table exists before inserting admin
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user'
+        )
+    ''')
     conn.commit()
     
     # Create fixed admin account if it doesn't exist

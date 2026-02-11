@@ -86,7 +86,13 @@ class Order(db.Model):
     status = db.Column(db.String(20), nullable=False, default='Pending') # e.g., Pending, Shipped, Delivered, Cancelled
     order_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     shipping_address = db.Column(db.Text, nullable=False)
+<<<<<<< HEAD
     items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
+=======
+    customer_email = db.Column(db.String(120), nullable=False) # Store email from checkout
+    items = db.relationship('OrderItem', backref='order', lazy=True, cascade="all, delete-orphan")
+    is_deleted = db.Column(db.Boolean, default=False)  # Soft delete flag
+>>>>>>> e1ea81e (email sent for ever status , error messages)
 
     def __repr__(self):
         return f'<Order {self.id}>'

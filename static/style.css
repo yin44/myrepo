@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     background-color: #f8f9fa;
 }
@@ -187,4 +188,218 @@ footer.footer{ border-top-left-radius: var(--radius-lg); border-top-right-radius
     .container{ padding-left: 12px; padding-right: 12px }
     .form-inline .form-control{ max-width: 100%; }
     .card-img-top{ max-height: 160px }
+=======
+/* === FINAL MODERN UI - HOME PAGE & NAV === */
+
+/* 1. Body & Background */
+body {
+    background-color: #526487; /* Muted blue from screenshot */
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* 1b. Main Content Wrapper */
+.main-content {
+    width: 100%;
+    max-width: 1200px; /* Or your preferred max width */
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* 1c. Force Container Transparency */
+.container {
+    background-color: transparent !important;
+}
+
+/* 1d. Home Page Wrapper */
+.home-page-wrapper {
+    background-color: transparent;
+}
+
+/* 1c. Definitive Fix for Container Background */
+body > .container, body > .main-content {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Title for 'Featured Laptops' */
+h2 {
+    color: #dbe0e8; /* Light text color for dark background */
+    font-weight: 600;
+}
+
+/* 2. Dark Navbar */
+.navbar {
+    background-color: #343a40 !important; /* Dark slate-blue from screenshot */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    backdrop-filter: none; /* Remove blur for solid color */
+}
+
+.navbar-brand, .navbar .nav-link {
+    color: #fff !important; /* White text for dark navbar */
+}
+
+.navbar .nav-link:hover {
+    color: #b0c4de !important; /* Lighter blue for hover */
+}
+
+/* 3. Home Page Search Bar */
+.home-search .form-control {
+    background-color: #455a73;
+    border: 1px solid #5a6f8a;
+    color: #fff;
+    border-radius: 0.25rem;
+}
+
+.home-search .form-control::placeholder {
+    color: #a8b4c5;
+}
+
+.home-search .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* 4. Product Cards (Transparent Design) */
+.card {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.card-img-top {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.card-text {
+    color: #ddd;
+}
+
+/* 4b. Grid Container - Make it transparent */
+.row {
+    background-color: transparent; /* Remove white background */
+}
+
+/* 4c. Ensure cards have consistent spacing */
+.col-md-4.mb-4 {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* 5. Glassmorphism Form Container (Preserved) */
+.form-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    color: #fff;
+    max-width: 800px;
+    margin: 3rem auto;
+}
+
+.form-container h2 {
+    color: #fff;
+    font-weight: 700;
+}
+
+/* 6. Modern Underline Form Inputs (Preserved) */
+.form-group {
+    position: relative;
+    margin-bottom: 2.5rem;
+}
+
+.form-group label {
+    color: #eee;
+    font-weight: 500;
+}
+
+.form-container .form-control {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    color: #fff;
+    padding: 0.75rem 0.25rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-container .form-control:focus {
+    background: transparent;
+    color: #fff;
+    border-color: #3498db;
+    box-shadow: none;
+}
+
+.form-container .input-group-text {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    color: #eee;
+    border-radius: 0;
+}
+
+/* 7. Button Styles (Unified) */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.7rem 1.4rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn-primary { background-color: #007bff; border-color: #007bff; color: #fff; }
+.btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+.btn-secondary { background-color: #6c757d; border-color: #6c757d; color: #fff; }
+.btn-secondary:hover { background-color: #5a6268; border-color: #545b62; }
+.btn-danger { background-color: #dc3545; border-color: #dc3545; color: #fff; }
+.btn-danger:hover { background-color: #c82333; border-color: #bd2130; }
+.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #212529; }
+.btn-warning:hover { background-color: #e0a800; border-color: #d39e00; }
+.btn-success { background-color: #28a745; border-color: #28a745; color: #fff; }
+.btn-success:hover { background-color: #218838; border-color: #1e7e34; }
+
+/* 8. Dropdown Fix (Preserved) */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 1100 !important;
+>>>>>>> e1ea81e (email sent for ever status , error messages)
 }

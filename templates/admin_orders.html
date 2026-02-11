@@ -37,11 +37,11 @@
                 </td>
                 <td>{{ order.shipping_address }}</td>
                 <td>
-                    <div class="dropdown" style="position: static;">
+                    <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-{{ order.id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Actions
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-{{ order.id }}" style="position: absolute; z-index: 1060; overflow: visible;">
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ order.id }}">
                             <a class="dropdown-item" href="{{ url_for('admin_order_details', order_id=order.id) }}">View Details</a>
                             <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="d-inline">
                                 <input type="hidden" name="status" value="Confirmed">
@@ -49,11 +49,7 @@
                             </form>
                             <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="d-inline">
                                 <input type="hidden" name="status" value="Shipped">
-                                <button type="submit" class="dropdown-item" {% if order.status not in ['Confirmed', 'Pending'] %}disabled{% endif %}>Ship</button>
-                            </form>
-                            <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="d-inline">
-                                <input type="hidden" name="status" value="Delivered">
-                                <button type="submit" class="dropdown-item" {% if order.status != 'Shipped' %}disabled{% endif %}>Deliver</button>
+                                <button type="submit" class="dropdown-item" {% if order.status != 'Confirmed' %}disabled{% endif %}>Ship</button>
                             </form>
                             <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}" class="d-inline">
                                 <input type="hidden" name="status" value="Cancelled">

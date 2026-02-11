@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Your Cart</h2>
+{% if cart_items and cart_items|length > 0 %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Brand & Model</th>
+            <th>Specs</th>
+            <th>Price</th>
+            <th>Discount</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td>
+                {% if item['image'] %}
+                <img src="{{ url_for('static', filename='images/' ~ item['image']) }}" alt="Image" class="img-thumbnail" style="max-width: 80px;">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="No image" class="img-thumbnail" style="max-width: 80px;">
+                {% endif %}
+            </td>
+            <!-- debug image -->
+            <td>{{ item['brand'] }} {{ item['model'] }}</td>
+            <td>{{ item['specs'] }}</td>
+            <td>${{ item['price'] }}</td>
+            <td>{{ item['discount'] if item['discount'] else 0 }}%</td>
+            <td>{{ item['quantity'] }}</td>
+            <td>${{ item['subtotal']|round(2) }}</td>
+            <td>
+                <form action="{{ url_for('remove_from_cart', laptop_id=item['id']) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="text-right">
+    <h4>Total: ${{ total|round(2) }}</h4>
+    <a href="{{ url_for('checkout') }}" class="btn btn-success">Proceed to Checkout</a>
+</div>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

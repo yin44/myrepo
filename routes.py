@@ -38,8 +38,6 @@ def register_routes(app, mail):
         laptop = Laptop.query.get_or_404(laptop_id)
         return render_template('product.html', laptop=laptop)
 
-<<<<<<< HEAD
-=======
     def send_order_email(order, customer_email, status):
         """Send email notification for order status changes"""
         try:
@@ -70,7 +68,6 @@ def register_routes(app, mail):
             app.logger.error(f"Failed to send email: {e}")
             return False
 
->>>>>>> e1ea81e (email sent for ever status , error messages)
     @app.route('/add_product', methods=['GET', 'POST'])
     @login_required
     def add_product():
@@ -78,20 +75,6 @@ def register_routes(app, mail):
             flash('Admins only!')
             return redirect(url_for('index'))
         if request.method == 'POST':
-<<<<<<< HEAD
-            brand = request.form['brand']
-            model = request.form['model']
-            specs = request.form['specs']
-            price = float(request.form['price'])
-            # Handle discount safely
-            discount_str = request.form.get('discount', '0')
-            discount = float(discount_str) if discount_str else 0.0
-            promotion = request.form.get('promotion')
-
-
-            stock = int(request.form.get('stock', 0))
-            description = request.form.get('description')
-=======
             # Enhanced validation
             errors = []
             
@@ -145,7 +128,6 @@ def register_routes(app, mail):
                 return render_template('add_edit.html', laptop=request.form, action='Add', readonly=False)
             
             # Handle image upload
->>>>>>> e1ea81e (email sent for ever status , error messages)
             image_file = request.files.get('image')
             image_filename = None
             if image_file and image_file.filename:
@@ -153,10 +135,7 @@ def register_routes(app, mail):
                 os.makedirs(img_folder, exist_ok=True)
                 image_filename = secure_filename(image_file.filename)
                 image_file.save(os.path.join(img_folder, image_filename))
-<<<<<<< HEAD
-=======
             
->>>>>>> e1ea81e (email sent for ever status , error messages)
             laptop = Laptop(
                 brand=brand, model=model, specs=specs, price=price,
                 discount=discount, promotion=promotion, stock=stock,
@@ -164,11 +143,7 @@ def register_routes(app, mail):
             )
             db.session.add(laptop)
             db.session.commit()
-<<<<<<< HEAD
-            flash('Product added!')
-=======
             flash('Product added successfully!', 'success')
->>>>>>> e1ea81e (email sent for ever status , error messages)
             return redirect(url_for('index'))
         return render_template('add_edit.html', laptop=None, action='Add', readonly=False)
 
@@ -180,25 +155,6 @@ def register_routes(app, mail):
             return redirect(url_for('index'))
         laptop = Laptop.query.get_or_404(laptop_id)
         if request.method == 'POST':
-<<<<<<< HEAD
-            laptop.brand = request.form['brand']
-            laptop.model = request.form['model']
-            laptop.specs = request.form['specs']
-            
-            # Handle price and discount safely
-            price_str = request.form.get('price', '0')
-            laptop.price = float(price_str) if price_str else 0.0
-            
-            discount_str = request.form.get('discount', '0')
-            laptop.discount = float(discount_str) if discount_str else 0.0
-            
-            # Handle stock safely
-            stock_str = request.form.get('stock', '0')
-            laptop.stock = int(stock_str) if stock_str else 0
-            
-            laptop.promotion = request.form.get('promotion')
-            laptop.description = request.form.get('description')
-=======
             # Enhanced validation
             errors = []
             
@@ -259,7 +215,6 @@ def register_routes(app, mail):
             laptop.description = request.form.get('description', '').strip()
             
             # Handle image upload
->>>>>>> e1ea81e (email sent for ever status , error messages)
             image_file = request.files.get('image')
             if image_file and image_file.filename:
                 img_folder = os.path.join('static', 'images')
@@ -267,14 +222,9 @@ def register_routes(app, mail):
                 image_filename = secure_filename(image_file.filename)
                 image_file.save(os.path.join(img_folder, image_filename))
                 laptop.image = image_filename
-<<<<<<< HEAD
-            db.session.commit()
-            flash('Product updated!')
-=======
             
             db.session.commit()
             flash('Product updated successfully!', 'success')
->>>>>>> e1ea81e (email sent for ever status , error messages)
             return redirect(url_for('product', laptop_id=laptop.id))
         return render_template('add_edit.html', laptop=laptop, action='Update', readonly=False)
 
@@ -339,12 +289,8 @@ def register_routes(app, mail):
                 user_id=current_user.id,
                 total_price=grand_total,
                 shipping_address=shipping_address,
-<<<<<<< HEAD
-                status='Pending'
-=======
                 status='Pending',
                 customer_email=customer_email  # Store the email from checkout
->>>>>>> e1ea81e (email sent for ever status , error messages)
             )
             db.session.add(new_order)
             db.session.commit() # Commit to get the new_order.id
@@ -400,12 +346,8 @@ def register_routes(app, mail):
             flash('Admins only!', 'error')
             return redirect(url_for('index'))
         
-<<<<<<< HEAD
-        all_orders = Order.query.order_by(Order.order_date.desc()).all()
-=======
         # Exclude soft-deleted orders
         all_orders = Order.query.filter_by(is_deleted=False).order_by(Order.order_date.desc()).all()
->>>>>>> e1ea81e (email sent for ever status , error messages)
         return render_template('admin_orders.html', orders=all_orders)
 
     @app.route('/admin/order/<int:order_id>')
@@ -429,11 +371,6 @@ def register_routes(app, mail):
         new_status = request.form.get('status')
 
         if new_status in ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']:
-<<<<<<< HEAD
-            order.status = new_status
-            db.session.commit()
-            flash(f'Order #{order.id} status updated to {new_status}.', 'success')
-=======
             old_status = order.status
             order.status = new_status
             db.session.commit()
@@ -451,7 +388,6 @@ def register_routes(app, mail):
                     flash(f'Order #{order.id} status updated to {new_status}.', 'success')
             else:
                 flash(f'Order #{order.id} status updated to {new_status}.', 'success')
->>>>>>> e1ea81e (email sent for ever status , error messages)
         else:
             flash('Invalid status update.', 'error')
         
@@ -466,20 +402,11 @@ def register_routes(app, mail):
 
         order = Order.query.get_or_404(order_id)
         
-<<<<<<< HEAD
-        # Optional: Add checks here, e.g., only allow deletion for cancelled orders
-        
-        db.session.delete(order)
-        db.session.commit()
-        
-        flash(f'Order #{order.id} has been deleted.', 'success')
-=======
         # Soft delete - mark as deleted instead of removing from database
         order.is_deleted = True
         db.session.commit()
         
         flash(f'Order #{order.id} has been soft deleted.', 'success')
->>>>>>> e1ea81e (email sent for ever status , error messages)
         return redirect(url_for('admin_orders'))
 
     @app.route('/login', methods=['GET', 'POST'])
@@ -512,17 +439,6 @@ def register_routes(app, mail):
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         if request.method == 'POST':
-<<<<<<< HEAD
-            username = request.form['username']
-            email = request.form['email']
-            password = request.form['password']
-            role = 'user'  # Always create regular users, not admins
-            if not is_valid_email(email):
-                flash('Invalid email format.')
-                return render_template('register.html')
-            if User.query.filter_by(email=email).first():
-                flash('Email already registered.')
-=======
             username = request.form.get('username', '').strip()
             email = request.form.get('email', '').strip()
             password = request.form.get('password', '').strip()
@@ -544,17 +460,12 @@ def register_routes(app, mail):
                 return render_template('register.html')
             if User.query.filter_by(email=email).first():
                 flash('Email already registered.', 'error')
->>>>>>> e1ea81e (email sent for ever status , error messages)
                 return render_template('register.html')
             hashed_password = generate_password_hash(password)
             new_user = User(username=username, email=email, password=hashed_password, role=role)
             db.session.add(new_user)
             db.session.commit()
-<<<<<<< HEAD
-            flash('Registration successful. Please log in.')
-=======
             flash('Registration successful. Please log in.', 'success')
->>>>>>> e1ea81e (email sent for ever status , error messages)
             return redirect(url_for('login'))
         return render_template('register.html')
 
@@ -595,15 +506,8 @@ def register_routes(app, mail):
                 flash(f'Sorry, {laptop.brand} {laptop.model} is out of stock.', 'error')
         
         session['cart'] = cart
-<<<<<<< HEAD
-        # Flash a confirmation and return to the referrer (page where add was triggered)
-        # if referrer is not available, fall back to index
-        ref = request.referrer or url_for('index')
-        return redirect(ref)
-=======
         # Redirect to cart page after adding item
         return redirect(url_for('cart'))
->>>>>>> e1ea81e (email sent for ever status , error messages)
 
     @app.route('/remove_from_cart/<int:laptop_id>', methods=['POST'])
     def remove_from_cart(laptop_id):

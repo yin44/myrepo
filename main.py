@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import re
->>>>>>> e1ea81e (email sent for ever status , error messages)
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -16,12 +13,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', 'a_default_secret_key')
-<<<<<<< HEAD
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///laptops.db'
-=======
 # Use an absolute path for the database URI to ensure consistency
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(app.root_path, 'laptops.db')
->>>>>>> e1ea81e (email sent for ever status , error messages)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Flask-Mail configuration
@@ -46,10 +39,6 @@ def load_user(user_id):
 
 routes.register_routes(app, mail)
 
-<<<<<<< HEAD
-
-with app.app_context():
-=======
 def get_db_file_path(app):
     """Extracts the absolute path to the SQLite database file from SQLALCHEMY_DATABASE_URI."""
     uri = app.config['SQLALCHEMY_DATABASE_URI']
@@ -142,7 +131,6 @@ def add_is_deleted_column():
 with app.app_context():
     add_customer_email_column()
     add_is_deleted_column()
->>>>>>> e1ea81e (email sent for ever status , error messages)
     db.create_all()
 
 if __name__ == '__main__':

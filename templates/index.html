@@ -1,68 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<<<<<<< HEAD
-<div class="row mb-4">
-    <div class="col-md-4 ml-auto">
-        <form method="get" action="{{ url_for('index') }}" class="form-inline">
-            <div class="input-group input-group-sm w-100">
-                <input type="text" class="form-control" name="search" placeholder="Search by brand..." value="{{ request.args.get('search', '') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<h2 class="mb-4">Featured Laptops</h2>
-<div class="row">
-    {% for laptop in laptops %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            {% if laptop['image'] %}
-            <img src="{{ url_for('static', filename='images/' ~ laptop['image']) }}" class="card-img-top" alt="{{ laptop['brand'] }} {{ laptop['model'] }}">
-            {% else %}
-            <img src="{{ url_for('static', filename='images/default.jpg') }}" class="card-img-top" alt="No image">
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <div>
-                    <h5 class="card-title">{{ laptop['brand'] }} {{ laptop['model'] }}</h5>
-                    <p class="card-text">
-                        {% if laptop['discount'] and laptop['discount'] > 0 %}
-                            <span class="text-muted"><del>${{ laptop['price'] }}</del></span>
-                            <span class="text-danger font-weight-bold">${{ (laptop['price'] * (1 - laptop['discount']/100))|round(2) }}</span>
-                        {% else %}
-                            <span class="font-weight-bold">${{ laptop['price'] }}</span>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="mt-auto">
-                    {% if laptop.promotion %}
-                    <span class="badge badge-success d-block mb-2">{{ laptop.promotion }}</span>
-                    {% endif %}
-
-                    <div class="mt-2">
-                        {# --- BUTTON LOGIC --- #}
-
-                        {# Guest View: Not logged in #}
-                        {% if not current_user.is_authenticated %}
-                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
-
-                        {# Admin View: Logged in and role is 'admin' #}
-                        {% elif current_user.role|string|trim|lower == 'admin' %}
-                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
-                            <a href="{{ url_for('edit_product', laptop_id=laptop.id) }}" class="btn btn-warning">Update</a>
-                            <a href="{{ url_for('delete_product', laptop_id=laptop.id) }}" class="btn btn-danger">Delete</a>
-
-                        {# Regular User View: Logged in but not an admin #}
-                        {% else %}
-                            <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
-                            <form method="post" action="{{ url_for('add_to_cart', laptop_id=laptop.id) }}" style="display: inline-block;">
-                                <button type="submit" class="btn btn-success">Add to Cart</button>
-                            </form>
-                        {% endif %}
-=======
 <div class="home-page-wrapper">
     <div class="row mb-4">
         <div class="col-md-4 ml-auto home-search">
@@ -125,37 +63,10 @@
                                 </form>
                             {% endif %}
                         </div>
->>>>>>> e1ea81e (email sent for ever status , error messages)
                     </div>
                 </div>
             </div>
         </div>
-<<<<<<< HEAD
-    </div>
-    {% endfor %}
-</div>
-
-<!-- Pagination Controls -->
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
-            <a class="page-link" href="{{ url_for('index', page=pagination.prev_num) }}">Previous</a>
-        </li>
-        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-            {% if p %}
-                <li class="page-item {% if p == pagination.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('index', page=p) }}">{{ p }}</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><a class="page-link" href="#">…</a></li>
-            {% endif %}
-        {% endfor %}
-        <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
-            <a class="page-link" href="{{ url_for('index', page=pagination.next_num) }}">Next</a>
-        </li>
-    </ul>
-</nav>
-=======
         {% endfor %}
     </div>
 
@@ -180,5 +91,4 @@
         </ul>
     </nav>
 </div>
->>>>>>> e1ea81e (email sent for ever status , error messages)
 {% endblock %}

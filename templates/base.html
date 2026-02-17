@@ -31,35 +31,20 @@
         </ul>
     </div>
 </nav>
-<<<<<<< HEAD
-<div class="container mt-4">
-        {% block content %}{% endblock %}
-=======
 <div class="main-content">
     {% block content %}{% endblock %}
->>>>>>> e1ea81e (email sent for ever status , error messages)
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
 <!-- Floating flash container -->
-<<<<<<< HEAD
-<div id="flash-container" class="flash-container" aria-live="polite" aria-atomic="true">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                {% set cls = 'danger' if category == 'error' else (category if category in ['success','warning','info','danger'] else 'info') %}
-                <div class="flash alert alert-{{ cls }}" role="alert" data-timeout="2000">
-=======
 <div id="flash-container" class="flash-container">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                {# Map 'error' to 'danger' for Bootstrap alert classes #}
                 {% set category = 'danger' if category == 'error' else category %}
                 <div class="flash alert alert-{{ category }}" role="alert">
->>>>>>> e1ea81e (email sent for ever status , error messages)
                     {{ message }}
                 </div>
             {% endfor %}
@@ -69,22 +54,6 @@
 
 <script>
 (function(){
-<<<<<<< HEAD
-    function removeElem(el){ if(el && el.parentNode) el.parentNode.removeChild(el); }
-    document.addEventListener('DOMContentLoaded', function(){
-        var container = document.getElementById('flash-container');
-        if(!container) return;
-        var flashes = Array.prototype.slice.call(container.querySelectorAll('.flash'));
-        flashes.forEach(function(f){
-            requestAnimationFrame(function(){ f.classList.add('visible'); });
-            var timeout = parseInt(f.getAttribute('data-timeout')) || 2000;
-            setTimeout(function(){
-                f.classList.add('fade-out');
-                setTimeout(function(){ removeElem(f); }, 450);
-            }, timeout);
-        });
-    });
-=======
     // Automatically remove flash messages after a delay
     const flashMessages = document.querySelectorAll('.flash');
     if (flashMessages.length > 0) {
@@ -96,7 +65,6 @@
             }, 5000); // Start fade-out after 5 seconds
         });
     }
->>>>>>> e1ea81e (email sent for ever status , error messages)
 })();
 </script>
 </body>

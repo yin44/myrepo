@@ -1,199 +1,8 @@
-<<<<<<< HEAD
-body {
-    background-color: #f8f9fa;
-}
-
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
-}
-
-.card {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border-radius: 8px;
-}
-
-.card-img-top {
-    max-height: 200px;
-    object-fit: contain;
-    background: #fff;
-}
-
-.btn-primary {
-    background-color: #343a40; /* Dark grey */
-    border-color: #343a40;
-    color: #fff;
-}
-
-.btn-primary:hover {
-    background-color: #23272b; /* Even darker grey on hover */
-    border-color: #23272b;
-}
-
-.btn-success {
-    background-color: #4a6b4a; /* Dark desaturated green */
-    border-color: #4a6b4a;
-    color: #fff;
-}
-
-.btn-success:hover {
-    background-color: #3a5a3a; /* Darker desaturated green on hover */
-    border-color: #3a5a3a;
-}
-
-.btn-warning {
-    background-color: #8b7b6b; /* Dark desaturated yellow/brown */
-    border-color: #8b7b6b;
-    color: #fff; /* White text for better contrast */
-}
-
-.btn-warning:hover {
-    background-color: #7a6a5a; /* Darker desaturated yellow/brown on hover */
-    border-color: #7a6a5a;
-}
-
-.btn-danger {
-    background-color: #a94442; /* Muted dark red */
-    border-color: #a94442;
-    color: #fff;
-}
-
-.btn-danger:hover {
-    background-color: #8b0000; /* Darker red on hover */
-    border-color: #8b0000;
-}
-
-.badge-success {
-    background-color: #4a6b4a; /* Match btn-success for consistency */
-    color: #fff;
-}
-
-footer.footer {
-    margin-top: 40px;
-    padding: 20px 0;
-    background: #e9ecef;
-    color: #6c757d;
-}
-
-/* Floating flash messages */
-.flash-container {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 1100;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    pointer-events: none;
-}
-.flash {
-    pointer-events: auto;
-    min-width: 220px;
-    max-width: 360px;
-    margin-top: 8px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-    border-radius: 6px;
-}
-.flash.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-.flash.fade-out {
-    opacity: 0;
-    transform: translateY(10px);
-}
-
-/* UI Revamp: global spacing, rounded corners, and cleaner inputs/buttons */
-:root{
-    --app-max-width: 1100px;
-    --radius-lg: 12px;
-    --radius-md: 8px;
-    --radius-sm: 6px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --muted: #6c757d;
-    --bg: #ffffff;
-    --card-bg: #ffffff;
-}
-
-*,*::before,*::after{box-sizing:border-box}
-body{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-    color:#222;
-    background: #f6f7f9;
-    -webkit-font-smoothing:antialiased;
-}
-
-.container{
-    max-width: var(--app-max-width);
-}
-
-.navbar{
-    padding-top: calc(var(--space-sm));
-    padding-bottom: calc(var(--space-sm));
-}
-.navbar-brand{font-weight:700; font-size:1.25rem}
-
-.card{
-    border: 0;
-    border-radius: var(--radius-lg);
-    background: var(--card-bg);
-  padding: var(--space-md);
-  overflow: hidden;
-}
-.card-body{padding: var(--space-md)}
-
-.card-img-top{ border-radius: var(--radius-md); margin: calc(var(--space-md) * -1); margin-bottom: var(--space-md); max-height: 220px; object-fit: contain; background: #ffffff; padding: var(--space-md); align-self: center; }
-
-/* Forms & inputs: reduce length and increase clarity */
-.form-control{ border-radius: var(--radius-sm); padding: 0.55rem 0.75rem; height: auto; min-height: 40px; }
-input.form-control[type="text"], textarea.form-control{ max-width: 640px; }
-.form-inline .form-control{ max-width: 420px; width: 100%; }
-
-/* Input group: keep button side by side with input */
-.input-group{ display: flex; align-items: center; flex-wrap: nowrap; }
-.input-group .form-control{ min-width: 0; flex: 1 }
-.input-group-append{ display: flex; margin-left: 6px }
-.input-group-append .btn{ border-radius: var(--radius-sm); padding: 0.55rem 0.9rem; font-weight:600; white-space: nowrap }
-.input-group-sm { font-size: 0.875rem }
-.input-group-sm .form-control { min-height: 36px; padding: 0.4rem 0.6rem }
-.input-group-sm .btn{ padding: 0.4rem 0.75rem; font-size: 0.875rem }
-
-/* Make smaller controls more compact */
-.input-group-sm .form-control, .form-control-sm{ padding: 0.4rem 0.6rem; min-height: 36px }
-
-/* Spacing: consistent margins */
-h1,h2,h3,h4{ margin-top:0; margin-bottom: var(--space-md) }
-.mb-4{ margin-bottom: var(--space-lg) !important }
-
-/* Badges and pagination */
-.badge{ border-radius: 999px; padding: 0.4em 0.6em }
-.pagination .page-item .page-link{ border-radius: var(--radius-sm); margin: 0 4px }
-
-/* Cart/Product buttons layout */
-.card .btn{ width: auto }
-
-/* Footer */
-footer.footer{ border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg); }
-
-/* Make flash messages slightly larger and match new radius */
-.flash{ border-radius: var(--radius-md); padding: 0.65rem 0.9rem; font-weight:600 }
-
-/* Responsive tweaks */
-@media (max-width: 768px){
-    .container{ padding-left: 12px; padding-right: 12px }
-    .form-inline .form-control{ max-width: 100%; }
-    .card-img-top{ max-height: 160px }
-=======
 /* === FINAL MODERN UI - HOME PAGE & NAV === */
 
 /* 1. Body & Background */
 body {
-    background-color: #526487; /* Muted blue from screenshot */
+    background-color: #fff8f0;
     color: #333;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.6;
@@ -203,7 +12,7 @@ body {
 /* 1b. Main Content Wrapper */
 .main-content {
     width: 100%;
-    max-width: 1200px; /* Or your preferred max width */
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
 }
@@ -218,7 +27,7 @@ body {
     background-color: transparent;
 }
 
-/* 1c. Definitive Fix for Container Background */
+/* 1e. Definitive Fix for Container Background */
 body > .container, body > .main-content {
     background: none !important;
     border: none !important;
@@ -227,31 +36,31 @@ body > .container, body > .main-content {
 
 /* Title for 'Featured Laptops' */
 h2 {
-    color: #dbe0e8; /* Light text color for dark background */
+    color: #181818;
     font-weight: 600;
 }
 
 /* 2. Dark Navbar */
 .navbar {
-    background-color: #343a40 !important; /* Dark slate-blue from screenshot */
+    background-color: #343a40 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    backdrop-filter: none; /* Remove blur for solid color */
+    backdrop-filter: none;
 }
 
 .navbar-brand, .navbar .nav-link {
-    color: #fff !important; /* White text for dark navbar */
+    color: #fff !important;
 }
 
 .navbar .nav-link:hover {
-    color: #b0c4de !important; /* Lighter blue for hover */
+    color: #b0c4de !important;
 }
 
 /* 3. Home Page Search Bar */
 .home-search .form-control {
-    background-color: #455a73;
+    background-color: #ffffff;
     border: 1px solid #5a6f8a;
-    color: #fff;
-    border-radius: 0.25rem;
+    color: #181818;
+    border-radius: 0.75rem;
 }
 
 .home-search .form-control::placeholder {
@@ -261,13 +70,14 @@ h2 {
 .home-search .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
+    border-radius: 0.75rem;
 }
 
 /* 4. Product Cards (Transparent Design) */
 .card {
     background-color: transparent !important;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
+    border-radius: 0.75rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
@@ -282,6 +92,13 @@ h2 {
 .card-img-top {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     transition: transform 0.4s ease;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    object-fit: contain;
+    height: 200px;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 0.5rem;
 }
 
 .card:hover .card-img-top {
@@ -296,16 +113,16 @@ h2 {
 .card-title {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #fff;
+    color: #181818;
 }
 
 .card-text {
-    color: #ddd;
+    color: #181818;
 }
 
 /* 4b. Grid Container - Make it transparent */
 .row {
-    background-color: transparent; /* Remove white background */
+    background-color: transparent;
 }
 
 /* 4c. Ensure cards have consistent spacing */
@@ -316,7 +133,7 @@ h2 {
 
 /* 5. Glassmorphism Form Container (Preserved) */
 .form-container {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.955);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 20px;
@@ -340,7 +157,7 @@ h2 {
 }
 
 .form-group label {
-    color: #eee;
+    color: #181818;
     font-weight: 500;
 }
 
@@ -371,7 +188,7 @@ h2 {
 
 /* 7. Button Styles (Unified) */
 .btn {
-    border-radius: 8px;
+    border-radius: 0.75rem;
     font-weight: 600;
     padding: 0.7rem 1.4rem;
     transition: all 0.3s ease;
@@ -401,5 +218,59 @@ h2 {
 
 .dropdown-menu {
     z-index: 1100 !important;
->>>>>>> e1ea81e (email sent for ever status , error messages)
+}
+
+/* 9. Flash Messages – Floating Glass Container */
+.flash-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    max-width: 500px;
+    width: 90%;
+    pointer-events: none;
+}
+
+.flash-container .alert {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.75rem;
+    color: #181818;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    animation: slideDown 0.3s ease-out;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Alert variants – keep bootstrap-like colors but with glass effect */
+.flash-container .alert-success {
+    background: rgba(40, 167, 69, 0.95);
+    color: white;
+}
+.flash-container .alert-danger {
+    background: rgba(220, 53, 69, 0.95);
+    color: white;
+}
+.flash-container .alert-warning {
+    background: rgba(255, 193, 7, 0.95);
+    color: #212529;
+}
+.flash-container .alert-info {
+    background: rgba(23, 162, 184, 0.95);
+    color: white;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

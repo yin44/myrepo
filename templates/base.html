@@ -58,11 +58,13 @@
     const flashMessages = document.querySelectorAll('.flash');
     if (flashMessages.length > 0) {
         flashMessages.forEach(function(flashMessage) {
-            setTimeout(function() {
-                // The fadeOut animation will handle the visual removal
-                // We remove the element from the DOM after the animation completes
-                setTimeout(() => flashMessage.remove(), 500);
-            }, 5000); // Start fade-out after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.add('fade-out');
+                // Wait for the animation to finish before removing from DOM
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 300); // 300ms matches the animation duration
+            }, 3000);
         });
     }
 })();

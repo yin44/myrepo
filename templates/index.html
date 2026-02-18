@@ -51,10 +51,11 @@
 
                             {# Admin View: Logged in and role is 'admin' #}
                             {% elif current_user.role|string|trim|lower == 'admin' %}
-                                <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
-                                <a href="{{ url_for('edit_product', laptop_id=laptop.id) }}" class="btn btn-warning">Update</a>
-                                <a href="{{ url_for('delete_product', laptop_id=laptop.id) }}" class="btn btn-danger">Delete</a>
-
+                                <div class="button-group">
+                                    <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>
+                                    <a href="{{ url_for('edit_product', laptop_id=laptop.id) }}" class="btn btn-warning">Update</a>
+                                    <a href="{{ url_for('delete_product', laptop_id=laptop.id) }}" class="btn btn-danger">Delete</a>
+                                </div>
                             {# Regular User View: Logged in but not an admin #}
                             {% else %}
                                 <a href="{{ url_for('product', laptop_id=laptop.id) }}" class="btn btn-primary">View Details</a>

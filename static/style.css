@@ -42,7 +42,7 @@ h2 {
 
 /* 2. Dark Navbar */
 .navbar {
-    background-color: #343a40 !important;
+    background-color: #343a40da !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     backdrop-filter: none;
 }
@@ -68,8 +68,8 @@ h2 {
 }
 
 .home-search .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #5185bc;
+    border-color: #5185bc;
     border-radius: 0.75rem;
 }
 
@@ -174,7 +174,7 @@ h2 {
 .form-container .form-control:focus {
     background: transparent;
     color: #fff;
-    border-color: #3498db;
+    border-color: #5185bc;
     box-shadow: none;
 }
 
@@ -200,14 +200,14 @@ h2 {
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.btn-primary { background-color: #007bff; border-color: #007bff; color: #fff; }
-.btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+.btn-primary { background-color: #5185bc; border-color: #5185bc; color: #fff; }
+.btn-primary:hover { background-color: #6398d1; border-color: #6398d1; }
 .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: #fff; }
 .btn-secondary:hover { background-color: #5a6268; border-color: #545b62; }
-.btn-danger { background-color: #dc3545; border-color: #dc3545; color: #fff; }
+.btn-danger { background-color: #c3515c; border-color: #c3515c; color: #fff; }
 .btn-danger:hover { background-color: #c82333; border-color: #bd2130; }
-.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #212529; }
-.btn-warning:hover { background-color: #e0a800; border-color: #d39e00; }
+.btn-warning { background-color: #888888; border-color: #888888; color: #212529; }
+.btn-warning:hover { background-color: #c5c5c5; border-color: #c5c5c5; }
 .btn-success { background-color: #28a745; border-color: #28a745; color: #fff; }
 .btn-success:hover { background-color: #218838; border-color: #1e7e34; }
 
@@ -288,4 +288,22 @@ h2 {
         opacity: 0;
         transform: translateY(-20px);
     }
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem; /* optional spacing between buttons */
+}
+
+.button-group .btn {
+    flex: 1;              /* makes each button take equal width */
+    text-align: center;   /* centers the text */
+    white-space: nowrap;  /* prevents text from wrapping (optional) */
+}
+
+/* If you want to allow text wrapping when buttons are very narrow, remove white-space: nowrap and add a min-width */
+.button-group .btn {
+    flex: 1;
+    text-align: center;
+    min-width: 80px;      /* ensures buttons don't get too tiny */
 }

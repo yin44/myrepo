@@ -59,10 +59,10 @@
     if (flashMessages.length > 0) {
         flashMessages.forEach(function(flashMessage) {
             setTimeout(() => {
-                alertElement.classList.add('fade-out');
+                flashMessage.classList.add('fade-out');
                 // Wait for the animation to finish before removing from DOM
                 setTimeout(() => {
-                    alertElement.remove();
+                    flashMessage.remove();
                 }, 300); // 300ms matches the animation duration
             }, 3000);
         });
